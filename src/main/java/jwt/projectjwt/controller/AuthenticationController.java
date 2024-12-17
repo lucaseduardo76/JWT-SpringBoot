@@ -38,19 +38,24 @@ public class AuthenticationController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        System.out.println("Print");
+    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+        System.out.println("Tentativa de login para: " + data.username());
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        try {
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            var token = tokenService.generateToken((User) auth.getPrincipal());
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } catch (Exception e) {
+            System.out.println("Erro ao autenticar: " + e.getMessage());
+            return ResponseEntity.status(401).body("Erro de autenticação: " + e.getMessage());
+        }
     }
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
-
-        if(this.userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
+        System.out.println("Tentativa de registrar para: " + data.username());
+        System.out.println(this.userRepository.findByUsername(data.username()).isEmpty());
+        if(!this.userRepository.findByUsername(data.username()).isEmpty()) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.username(), encryptedPassword, data.role());

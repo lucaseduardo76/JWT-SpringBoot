@@ -1,23 +1,26 @@
 package jwt.projectjwt.controller;
 
+import jwt.projectjwt.domain.user.User;
+import jwt.projectjwt.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/product")
 public class ProductController {
 
+    @Autowired
+    UserRepository userRepository;
+
     @GetMapping
-    public String getProduct() {
-        return "<html>" +
-                "<style>" +
-                "body{ background-color: black}" +
-                "h1{color: white}" +
-                "</style>" +
-                "<body>" +
-                "<h1>Hello World</h1>" +
-                "</body>" +
-                "</html>";
+    public ResponseEntity<List<User>> getProduct() {
+        List<User> list = userRepository.findAll();
+
+        return ResponseEntity.ok(list);
     }
 }

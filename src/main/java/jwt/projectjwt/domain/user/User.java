@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "tb_users")
 public class User implements UserDetails {
@@ -37,6 +36,8 @@ public class User implements UserDetails {
         this.password = encryptedPassword;
         this.role = role;
     }
+
+    public User() {}
 
 
     @Override
